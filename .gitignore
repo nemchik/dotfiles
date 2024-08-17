@@ -1,0 +1,7 @@
+# Excluded files
+# PowerShell
+config/PowerShell/Modules/
+
+# Terminal
+config/Terminal/state.json
+config/Terminal/elevated-state.json
