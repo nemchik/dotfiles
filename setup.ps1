@@ -48,10 +48,10 @@ function Install-Scoop-Packages {
     }
 
     foreach ($scoop_bucket in $scoop_buckets) {
-        scoop bucket add "$scoop_bucket"
+        scoop bucket add $scoop_bucket
     }
 
-    scoop install "$scoop_packages"
+    scoop install $scoop_packages
     scoop update *
 }
 
@@ -59,7 +59,7 @@ function Install-PowerShell-Modules {
     Write-Output "Installing PowerShell modules"
 
     foreach ($powershellModule in $powershell_modules) {
-        Install-Module -Name "$powershellModule" -AllowClobber -Force -ErrorAction SilentlyContinue
+        Install-Module -Name $powershellModule -AllowClobber -Force -ErrorAction SilentlyContinue
     }
 
     Update-Module
@@ -76,9 +76,9 @@ function New-SymbolicLink {
     )
     $backup = "$destination.old"
 
-    Remove-Item -Path "$backup" -Recurse -Force -ErrorAction SilentlyContinue
-    Move-Item -Path "$destination" -Destination "$backup" -Force -ErrorAction SilentlyContinue
-    New-Item -ItemType SymbolicLink -Path "$destination" -Target "$source" -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $backup -Recurse -Force -ErrorAction SilentlyContinue
+    Move-Item -Path $destination -Destination $backup -Force -ErrorAction SilentlyContinue
+    New-Item -ItemType SymbolicLink -Path $destination -Target $source -Force -ErrorAction SilentlyContinue
 }
 
 function Install-PowerShell-Profile {
