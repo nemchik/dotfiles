@@ -85,7 +85,7 @@ install_fonts() {
 
 install_shfmt() {
     echo -e "\u001b[7m Installing shfmt...\u001b[0m"
-    go install mvdan.cc/sh/v3/cmd/shfmt@latest
+    go install mvdan.cc/sh/v3/cmd/shfmt@latest || true
 }
 
 install_starship() {
