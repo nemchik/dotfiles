@@ -8,28 +8,27 @@ declare -a common_packages=(
   grep
   ncdu
   sed
+  shellcheck
   tmux
   unzip
   wget
 )
 
 install_arch() {
-  sudo pacman -S "${common_packages[@]}" github-cli
+  sudo pacman -S "${common_packages[@]}" github-cli || true
 }
 
 install_fedora() {
-  sudo dnf install "${common_packages[@]}" gh
+  sudo dnf install "${common_packages[@]}" gh || true
 }
 
 install_debian() {
   sudo apt update
-  sudo apt install "${common_packages[@]}" gh
+  sudo apt install "${common_packages[@]}" gh || true
 }
 
 install_termux() {
-  pkg install "${common_packages[@]}" getconf gh openssh termux-tools
-  ln -sfnv "${PWD}/../config/bin" "${HOME}"/bin
-  cp -rv "${PWD}/../config/.termux" "${HOME}"/
+  pkg install "${common_packages[@]}" getconf gh openssh termux-tools || true
 }
 
 get_system_info() {
@@ -62,6 +61,11 @@ install_fnm() {
   curl -fsSL https://fnm.vercel.app/install | bash
 }
 
+install_shfmt() {
+  echo -e "\u001b[7m Installing shfmt...\u001b[0m"
+  go install mvdan.cc/sh/v3/cmd/shfmt@latest
+}
+
 install_starship() {
   echo -e "\u001b[7m Installing starship...\u001b[0m"
   curl -sS https://starship.rs/install.sh | sh
@@ -69,6 +73,7 @@ install_starship() {
 
 install_extras() {
   install_fnm
+  install_shfmt
   install_starship
 }
 
@@ -81,16 +86,17 @@ declare -a home_files=(
   ".bashrc"
   ".gitattributes"
   ".gitconfig"
+  ".gitconfig-codespaces"
   ".profile"
 )
 
 backup_configs() {
   echo -e "\u001b[33;1m Backing up existing files... \u001b[0m"
   for dir in "${config_dirs[@]}"; do
-    mv -v "${HOME}/.config/${dir}" "${HOME}/.config/${dir}.old"
+    mv -v "${HOME}/.config/${dir}" "${HOME}/.config/${dir}.old" || true
   done
   for file in "${home_files[@]}"; do
-    mv -v "${HOME}/${file}" "${HOME}/${file}.old"
+    mv -v "${HOME}/${file}" "${HOME}/${file}.old" || true
   done
   echo -e "\u001b[36;1m Done backing up files as '.old'! . \u001b[0m"
 }
@@ -98,10 +104,10 @@ backup_configs() {
 setup_symlinks() {
   echo -e "\u001b[7m Setting up symlinks... \u001b[0m"
   for dir in "${config_dirs[@]}"; do
-    ln -sfnv "${PWD}/config/${dir}" "${HOME}/.config/"
+    ln -sfnv "${PWD}/config/${dir}" "${HOME}/.config/" || true
   done
   for file in "${home_files[@]}"; do
-    ln -sfnv "${PWD}/config/${file}" "${HOME}"/
+    ln -sfnv "${PWD}/config/${file}" "${HOME}"/ || true
   done
 }
 
@@ -137,7 +143,7 @@ show_menu() {
 }
 
 main() {
-  case "${1}" in
+  case "${1:-}" in
   -a | --all | a | all) setup_dotfiles ;;
   -i | --install | i | install) install_packages && install_extras ;;
   -s | --symlinks | s | symlinks) setup_symlinks ;;

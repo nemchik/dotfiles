@@ -105,3 +105,6 @@
 
   # Use --autostash when running git pull --rebase and when rebasing interactively
   autoStash = true
+
+[includeIf "gitdir:/workspaces/"]
+  path = .gitconfig-codespaces
