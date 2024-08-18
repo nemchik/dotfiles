@@ -68,7 +68,7 @@ install_shfmt() {
 
 install_starship() {
   echo -e "\u001b[7m Installing starship...\u001b[0m"
-  curl -sS https://starship.rs/install.sh | sh
+  curl -sS https://starship.rs/install.sh | sh -s -- --yes
 }
 
 install_extras() {
