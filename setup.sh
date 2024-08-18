@@ -143,6 +143,11 @@ show_menu() {
 }
 
 main() {
+  if [[ "${HOME}" == "/home/codespace" ]]; then
+    setup_dotfiles
+    exit 0
+  fi
+
   case "${1:-}" in
   -a | --all | a | all) setup_dotfiles ;;
   -i | --install | i | install) install_packages && install_extras ;;
