@@ -15,20 +15,20 @@ declare -a common_packages=(
 )
 
 install_arch() {
-  sudo pacman -S "${common_packages[@]}" github-cli || true
+  sudo pacman -y -S "${common_packages[@]}" github-cli || true
 }
 
 install_fedora() {
-  sudo dnf install "${common_packages[@]}" gh || true
+  sudo dnf -y install "${common_packages[@]}" gh || true
 }
 
 install_debian() {
-  sudo apt update
-  sudo apt install "${common_packages[@]}" gh || true
+  sudo apt -y update
+  sudo apt -y install "${common_packages[@]}" gh || true
 }
 
 install_termux() {
-  pkg install "${common_packages[@]}" getconf gh openssh termux-tools || true
+  pkg install -y "${common_packages[@]}" getconf gh openssh termux-tools || true
 }
 
 get_system_info() {
