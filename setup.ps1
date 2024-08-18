@@ -131,6 +131,7 @@ function Main {
     Install-Terminal-Profile
     Install-Config-Dirs
     Install-Home-Files
+    Write-Output "Done!"
 }
 
 Main
