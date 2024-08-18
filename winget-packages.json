@@ -1,0 +1,48 @@
+{
+  "$schema": "https://aka.ms/winget-packages.schema.2.0.json",
+  "Sources": [
+    {
+      "Packages": [
+        {
+          "PackageIdentifier": "Docker.DockerDesktop"
+        },
+        {
+          "PackageIdentifier": "Git.Git"
+        },
+        {
+          "PackageIdentifier": "Microsoft.OpenSSH.Beta"
+        },
+        {
+          "PackageIdentifier": "GitHub.cli"
+        },
+        {
+          "PackageIdentifier": "Starship.Starship"
+        },
+        {
+          "PackageIdentifier": "Microsoft.PowerShell"
+        },
+        {
+          "PackageIdentifier": "Schniz.fnm"
+        },
+        {
+          "PackageIdentifier": "hadolint.hadolint"
+        },
+        {
+          "PackageIdentifier": "koalaman.shellcheck"
+        },
+        {
+          "PackageIdentifier": "mvdan.shfmt"
+        },
+        {
+          "PackageIdentifier": "Microsoft.WindowsTerminal"
+        }
+      ],
+      "SourceDetails": {
+        "Argument": "https://cdn.winget.microsoft.com/cache",
+        "Identifier": "Microsoft.Winget.Source_8wekyb3d8bbwe",
+        "Name": "winget",
+        "Type": "Microsoft.PreIndexed.Package"
+      }
+    }
+  ]
+}
