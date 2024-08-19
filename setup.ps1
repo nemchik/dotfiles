@@ -78,7 +78,7 @@ function New-SymbolicLink {
 
     Remove-Item -Path $backup -Recurse -Force -ErrorAction SilentlyContinue
     Move-Item -Path $destination -Destination $backup -Force -ErrorAction SilentlyContinue
-    New-Item -ItemType SymbolicLink -Path $destination -Target $source -Force -ErrorAction SilentlyContinue
+    New-Item -ItemType SymbolicLink -Path $destination -Target $source -Force
 }
 
 function Install-PowerShell-Profile {
@@ -126,9 +126,9 @@ function Install-Home-Files {
 function Main {
     Install-Winget-Packages
     Install-Scoop-Packages
-    Install-PowerShell-Modules
     Install-PowerShell-Profile
     Install-Terminal-Profile
+    Install-PowerShell-Modules
     Install-Config-Dirs
     Install-Home-Files
     Write-Output "Done!"
