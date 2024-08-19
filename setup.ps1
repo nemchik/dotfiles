@@ -26,7 +26,7 @@ $scoop_packages = @(
     "NerdFontsSymbolsOnly"
 )
 
-function Install-Winget-Packages {
+function Install-Packages-Winget {
     Write-Output "Installing winget packages"
 
     if (!(Get-Command winget)) {
@@ -38,7 +38,7 @@ function Install-Winget-Packages {
     winget upgrade --all --accept-package-agreements
 }
 
-function Install-Scoop-Packages {
+function Install-Packages-Scoop {
     Write-Output "Installing scoop packages"
 
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -55,7 +55,7 @@ function Install-Scoop-Packages {
     scoop update *
 }
 
-function Install-PowerShell-Modules {
+function Install-Modules-PowerShell {
     Write-Output "Installing PowerShell modules"
 
     foreach ($powershellModule in $powershell_modules) {
@@ -81,7 +81,7 @@ function New-SymbolicLink {
     New-Item -ItemType SymbolicLink -Path $destination -Target $source -Force
 }
 
-function Install-PowerShell-Profile {
+function Install-Profile-PowerShell {
     Write-Output "Installing PowerShell profile"
 
     $source5 = Join-Path $PWD "config\PowerShell"
@@ -95,7 +95,7 @@ function Install-PowerShell-Profile {
     New-SymbolicLink -source $source7 -destination $destination7
 }
 
-function Install-Terminal-Profile {
+function Install-Profile-Terminal {
     Write-Output "Installing Terminal profile"
 
     $source = Join-Path $PWD "config\Terminal"
@@ -103,7 +103,7 @@ function Install-Terminal-Profile {
     New-SymbolicLink -source $source -destination $destination
 }
 
-function Install-Config-Dirs {
+function Install-Dirs-Config {
     Write-Output "Installing config directories"
 
     foreach ($config_dir in $config_dirs) {
@@ -113,7 +113,7 @@ function Install-Config-Dirs {
     }
 }
 
-function Install-Home-Files {
+function Install-Files-Home {
     Write-Output "Installing home files"
 
     foreach ($home_file in $home_files) {
@@ -124,13 +124,13 @@ function Install-Home-Files {
 }
 
 function Main {
-    Install-Winget-Packages
-    Install-Scoop-Packages
-    Install-PowerShell-Profile
-    Install-Terminal-Profile
-    Install-PowerShell-Modules
-    Install-Config-Dirs
-    Install-Home-Files
+    Install-Packages-Winget
+    Install-Packages-Scoop
+    Install-Profile-PowerShell
+    Install-Profile-Terminal
+    Install-Modules-PowerShell
+    Install-Dirs-Config
+    Install-Files-Home
     Write-Output "Done!"
 }
 
