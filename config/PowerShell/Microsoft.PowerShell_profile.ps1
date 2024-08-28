@@ -7,8 +7,8 @@ function Invoke-Starship-TransientFunction {
 Invoke-Expression (&starship init powershell)
 Enable-TransientPrompt
 
-fnm env --use-on-cd --version-file-strategy=recursive | Out-String | Invoke-Expression
-fnm completions --version-file-strategy=recursive | Out-String | Invoke-Expression
+fnm env --use-on-cd --version-file-strategy=recursive --resolve-engines | Out-String | Invoke-Expression
+fnm completions --version-file-strategy=recursive --resolve-engines | Out-String | Invoke-Expression
 
 # Chocolatey profile
 $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
