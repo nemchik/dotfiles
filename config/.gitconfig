@@ -1,27 +1,23 @@
 [user]
   email = eric@nemchik.com
   name = Eric Nemchik
-  signingkey = ~/.ssh/id_ed25519.pub
+  signingKey = ~/.ssh/id_ed25519.pub
 
 [core]
   # Global `.gitattributes`
-  attributesfile = ~/.gitattributes
+  attributesFile = ~/.gitattributes
 
   # Default editor for commit messages and other inputs
   # Even when EDITOR is set to something else
   editor = code --wait
 
-  # Make `git rebase` safer on OS X
-  # More info: http://www.git-tower.com/blog/make-git-rebase-safe-on-osx
-  trustctime = false
-
   # Prevent showing files whose names contain non-ASCII symbols as unversioned.
   # http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
-  precomposeunicode = false
+  precomposeUnicode = false
 
   # Speed up commands involving untracked files such as `git status`.
   # https://git-scm.com/docs/git-update-index#_untracked_cache
-  untrackedCache = true
+	untrackedCache = true
 
   # Treat
   #  - spaces before tabs,
@@ -34,10 +30,19 @@
   trustctime = false
 
   # https://stackoverflow.com/questions/18257622/why-is-git-core-preloadindex-default-value-false/18259086
-  preloadindex = true
+  preloadIndex = true
 
   # Enable the filesystem cache (for git bash | windows)
   fscache = true
+
+	fsmonitor = true
+	commitGraph = true
+
+[feature]
+	manyFiles = true
+
+[gpg]
+  format = ssh
 
 [diff]
   # Use more time to create better diffs.
@@ -45,12 +50,7 @@
   # See "`git help diff` --patience" and "`git help merge` recursive".
   algorithm = patience
 
-  # (git 2.9+) Set this option to `true` to enable an experimental heuristic that
-  # shifts the hunk boundary in an attempt to make the resulting
-  # patch easier to read.
-  compactionHeuristic = true
-
-  renamelimit = 9999
+  renameLimit = 9999
 
   color = auto
 
@@ -65,28 +65,19 @@
   cmd = code --wait --diff $LOCAL $REMOTE
 
 [merge]
-  tool = code
+  tool = default-mergetool
 
   # Always show a diffstat at the end of a merge
   stat = true
 
   # Git has an option to display merge conflicts in diff3 format (by default it only displays the two files to be merged).
-  conflictstyle = diff3
+  conflictStyle = diff3
 
   # Include summaries of merged commits in newly created merge commit messages
   log = true
 
-[mergetool "code"]
+[mergetool "default-mergetool"]
   cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
-
-[gpg]
-  format = ssh
-
-[commit]
-  gpgsign = true
-
-[tag]
-  gpgsign = true
 
 [apply]
   # detect whitespace errors when applying a patch
@@ -95,7 +86,15 @@
   # automagically fix whitespace
   #whitespace = fix
 
+[commit]
+  gpgSign = true
+
+[fetch]
+	writeCommitGraph = true
+
 [push]
+  gpgSign = if-asked
+
   # Make `git push` push relevant annotated tags when pushing branches out.
   followTags = true
 
@@ -105,6 +104,9 @@
 
   # Use --autostash when running git pull --rebase and when rebasing interactively
   autoStash = true
+
+[tag]
+  gpgSign = true
 
 [includeIf "gitdir:/workspaces/"]
   path = .gitconfig-codespaces
