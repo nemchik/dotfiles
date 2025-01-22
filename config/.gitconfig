@@ -110,3 +110,5 @@
 
 [includeIf "gitdir:/workspaces/"]
   path = .gitconfig-codespaces
+
+[maintenance]
