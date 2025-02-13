@@ -11,8 +11,8 @@ $home_files = @(
 )
 
 $powershell_modules = @(
-    "Terminal-Icons",
-    "PSReadLine"
+    # "Terminal-Icons", # This constantly causes error messages when opening a new terminal
+    # "PSReadLine" # PSReadLine is already included in PowerShell 7
 )
 
 $scoop_buckets = @(
