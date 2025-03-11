@@ -10,19 +10,28 @@
           "PackageIdentifier": "Git.Git"
         },
         {
-          "PackageIdentifier": "Microsoft.OpenSSH.Beta"
-        },
-        {
           "PackageIdentifier": "GitHub.cli"
         },
         {
-          "PackageIdentifier": "Starship.Starship"
+          "PackageIdentifier": "Microsoft.OpenSSH.Beta"
         },
         {
           "PackageIdentifier": "Microsoft.PowerShell"
         },
         {
+          "PackageIdentifier": "Microsoft.WindowsTerminal"
+        },
+        {
+          "PackageIdentifier": "Oracle.JDK.17"
+        },
+        {
+          "PackageIdentifier": "Oracle.JDK.21"
+        },
+        {
           "PackageIdentifier": "Schniz.fnm"
+        },
+        {
+          "PackageIdentifier": "Starship.Starship"
         },
         {
           "PackageIdentifier": "hadolint.hadolint"
@@ -32,9 +41,6 @@
         },
         {
           "PackageIdentifier": "mvdan.shfmt"
-        },
-        {
-          "PackageIdentifier": "Microsoft.WindowsTerminal"
         }
       ],
       "SourceDetails": {
