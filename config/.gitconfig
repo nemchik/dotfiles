@@ -79,6 +79,9 @@
 [mergetool "default-mergetool"]
   cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
 
+[rerere]
+	enabled = true
+
 [apply]
   # detect whitespace errors when applying a patch
   whitespace = warn
