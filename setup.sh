@@ -47,7 +47,9 @@ install_termux() {
 }
 
 get_system_info() {
+    # shellcheck source=/dev/null
     [[ -e /etc/os-release ]] && source /etc/os-release && echo "${ID:-Unknown}" && return
+    # shellcheck source=/dev/null
     [[ -e /etc/lsb-release ]] && source /etc/lsb-release && echo "${DISTRIB_ID:-Unknown}" && return
     [[ "$(uname || true)" == "Darwin" ]] && echo "mac" && return
     [[ "$(uname -o || true)" == "Android" ]] && echo "termux" && return
@@ -160,7 +162,10 @@ main() {
 
     case "${1:-}" in
         -a | --all | a | all) setup_dotfiles ;;
-        -i | --install | i | install) install_packages && install_extras ;;
+        -i | --install | i | install)
+            install_packages
+            install_extras
+            ;;
         -s | --symlinks | s | symlinks) setup_symlinks ;;
         *) show_menu ;;
     esac
