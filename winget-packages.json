@@ -13,7 +13,7 @@
           "PackageIdentifier": "GitHub.cli"
         },
         {
-          "PackageIdentifier": "Microsoft.OpenSSH.Beta"
+          "PackageIdentifier": "Microsoft.OpenSSH.Preview"
         },
         {
           "PackageIdentifier": "Microsoft.PowerShell"
