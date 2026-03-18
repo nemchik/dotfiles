@@ -7,7 +7,9 @@ declare -a common_packages=(
     git
     golang
     grep
+    htop
     ncdu
+    rsync
     sed
     shellcheck
     # shfmt # requires ubuntu 22.04
@@ -104,6 +106,7 @@ install_extras() {
 
 backup_configs() {
     echo -e "\u001b[33;1m Backing up existing files... \u001b[0m"
+    mkdir -p "${HOME}/.config"
     for dir in "${config_dirs[@]}"; do
         mv -v "${HOME}/.config/${dir}" "${HOME}/.config/${dir}.old" || true
     done
