@@ -118,6 +118,7 @@ backup_configs() {
 
 setup_symlinks() {
     echo -e "\u001b[7m Setting up symlinks... \u001b[0m"
+    mkdir -p "${HOME}/.config"
     for dir in "${config_dirs[@]}"; do
         ln -sfnv "${PWD}/config/${dir}" "${HOME}/.config/" || true
     done
