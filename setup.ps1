@@ -11,8 +11,10 @@ $home_files = @(
 )
 
 $powershell_modules = @(
+    "PowerShellGet", # This is required to install other modules, so it should be installed first
     # "Terminal-Icons", # This constantly causes error messages when opening a new terminal
-    # "PSReadLine" # PSReadLine is already included in PowerShell 7
+    "PSReadLine", # PSReadLine is already included in PowerShell 7
+    "CompletionPredictor" # This is a plugin for PSReadLine that provides command predictions based on history and plugins
 )
 
 $scoop_buckets = @(

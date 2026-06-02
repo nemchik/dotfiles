@@ -9,16 +9,50 @@ Invoke-Expression (&starship init powershell)
 Enable-TransientPrompt
 
 # fnm
-&fnm env --use-on-cd --version-file-strategy=recursive --corepack-enabled --resolve-engines | Out-String | Invoke-Expression
-&fnm completions --version-file-strategy=recursive --corepack-enabled --resolve-engines | Out-String | Invoke-Expression
+[Environment]::SetEnvironmentVariable("FNM_COREPACK_ENABLED", "true", "User")
+[Environment]::SetEnvironmentVariable("FNM_RESOLVE_ENGINES", "true", "User")
+[Environment]::SetEnvironmentVariable("FNM_VERSION_FILE_STRATEGY", "recursive", "User")
+&fnm env --use-on-cd | Out-String | Invoke-Expression
+&fnm completions | Out-String | Invoke-Expression
 
 # Terminal-Icons
 # Import-Module Terminal-Icons
 
+# CompletionPredictor
+Import-Module -Name CompletionPredictor
+
 # PSReadLine
-Set-PSReadLineOption -BellStyle None
-Set-PSReadLineOption -PredictionSource History
-Set-PSReadLineOption -PredictionViewStyle ListView
+$PSReadLineOptions = @{
+    BellStyle                     = "None"
+    HistoryNoDuplicates           = $true
+    HistorySearchCursorMovesToEnd = $true
+    PredictionSource              = "HistoryAndPlugin"
+    PredictionViewStyle           = "ListView"
+    Colors                        = @{
+        Command                = [ConsoleColor]::Magenta # The command token color.
+        Comment                = [ConsoleColor]::DarkGray # The comment token color.
+        ContinuationPrompt     = [ConsoleColor]::DarkGray # The color of the continuation prompt.
+        Default                = [ConsoleColor]::DarkGray # The default token color.
+        Emphasis               = [ConsoleColor]::DarkGray # The emphasis color. For example, the matching text when searching history.
+        Error                  = [ConsoleColor]::DarkRed # The error color. For example, in the prompt.
+        InlinePrediction       = [ConsoleColor]::Blue # The color for the inline view of the predictive suggestion.
+        Keyword                = [ConsoleColor]::DarkGray # The keyword token color.
+        ListPrediction         = [ConsoleColor]::DarkGray # The color for the leading > character and prediction source name.
+        ListPredictionSelected = [ConsoleColor]::DarkGray # The color for the selected prediction in list view.
+        Member                 = [ConsoleColor]::DarkGray # The member name token color.
+        Number                 = [ConsoleColor]::DarkGray # The number token color.
+        Operator               = [ConsoleColor]::DarkGray # The operator token color.
+        Parameter              = [ConsoleColor]::DarkGreen # The parameter token color.
+        Selection              = [ConsoleColor]::DarkGray # The color to highlight the menu selection or selected text.
+        String                 = [ConsoleColor]::DarkGray # The string token color.
+        Type                   = [ConsoleColor]::DarkGray # The type token color.
+        Variable               = [ConsoleColor]::DarkGreen # The variable token color.
+    }
+}
+Set-PSReadLineOption @PSReadLineOptions
+Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
+Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+Set-PSReadLineKeyHandler -Key Tab -Function Complete
 
 # Chocolatey profile
 $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"

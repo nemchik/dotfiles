@@ -131,6 +131,9 @@ eval "$(starship init bash || true)"
 FNM_PATH="${HOME}/.local/share/fnm"
 if [[ -d "${FNM_PATH}" ]]; then
   export PATH="${FNM_PATH}:${PATH}"
-  eval "$(fnm env --use-on-cd --version-file-strategy=recursive --corepack-enabled --resolve-engines || true)"
-  eval "$(fnm completions --version-file-strategy=recursive --corepack-enabled --resolve-engines || true)"
+  export FNM_COREPACK_ENABLED="true"
+  export FNM_RESOLVE_ENGINES="true"
+  export FNM_VERSION_FILE_STRATEGY="recursive"
+  eval "$(fnm env --use-on-cd || true)"
+  eval "$(fnm completions || true)"
 fi
