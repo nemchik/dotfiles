@@ -1,117 +1,146 @@
 [user]
+  # Email address Git records on commits from this machine.
   email = eric@nemchik.com
+
+  # Author name Git records on commits from this machine.
   name = Eric Nemchik
+
+  # SSH public key Git uses for SSH-based commit and tag signing.
   signingKey = ~/.ssh/id_ed25519.pub
 
 [core]
-  # Global `.gitattributes`
+  # Shared attributes file applied to every repository.
   attributesFile = ~/.gitattributes
 
-  # Default editor for commit messages and other inputs
-  # Even when EDITOR is set to something else
+  # Default editor for commit messages and other interactive Git prompts.
   editor = code --wait
 
-  # Prevent showing files whose names contain non-ASCII symbols as unversioned.
-  # http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
+  # Avoid listing decomposed Unicode filenames as untracked on platforms that normalize names.
   precomposeUnicode = false
 
-  # Speed up commands involving untracked files such as `git status`.
-  # https://git-scm.com/docs/git-update-index#_untracked_cache
+  # Cache untracked-file state to speed up status and similar commands.
   untrackedCache = true
 
-  # Treat
-  #  - spaces before tabs,
-  #  - all kinds of trailing whitespace
-  # as an error.
+  # Treat indentation and trailing-whitespace problems as errors.
   whitespace = space-before-tab,-indent-with-non-tab,trailing-space
 
-  # Make `git rebase` safer on macOS
-  # More info: <http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/>
+  # Prefer filesystem timestamps that behave more safely across filesystem boundaries.
   trustctime = false
 
-  # https://stackoverflow.com/questions/18257622/why-is-git-core-preloadindex-default-value-false/18259086
+  # Preload index entries to make operations on large trees faster.
   preloadIndex = true
 
-  # Enable the filesystem cache (for git bash | windows)
+  # Enable filesystem caching for Git on Windows.
   fscache = true
 
+  # Use filesystem monitoring to avoid re-scanning unchanged paths.
   fsmonitor = true
+
+  # Store and use commit-graph data for faster history and reachability queries.
   commitGraph = true
 
 [feature]
+  # Opt into Git's optimizations for very large repositories.
   manyFiles = true
 
+[column]
+  # Format columnar output automatically when Git uses this renderer.
+  ui = auto
+
 [gpg]
+  # Sign commits and tags with SSH keys instead of OpenPGP keys.
   format = ssh
 
 [diff]
-  # Use more time to create better diffs.
-  # E.g. matching opening/closing braces from neighbour functions.
-  # See "`git help diff` --patience" and "`git help merge` recursive".
-  algorithm = patience
+  # Use VS Code for graphical diff and merge tools.
+  guitool = vscode
 
+  # Use VS Code for text-based diff operations.
+  tool = vscode
+
+  # Spend more time finding better diff matches for cleaner output.
+  algorithm = histogram
+
+  # Allow Git to search a wider range when detecting renamed files.
   renameLimit = 9999
 
+  # Render diff output with automatic colors.
   color = auto
 
-  # Tells git to detect renames. If set to any boolean value,
-  # it will enable basic rename detection. If set to "copies" or "copy",
-  # it will detect copies, as well.
+  # Detect renames and copies when comparing changes.
   renames = copies
 
-  tool = default-difftool
-
-[difftool "default-difftool"]
-  cmd = code --wait --diff $LOCAL $REMOTE
-
 [merge]
-  tool = default-mergetool
+  # Use VS Code for graphical merge operations.
+  guitool = vscode
 
-  # Always show a diffstat at the end of a merge
+  # Use VS Code for text-based merge operations.
+  tool = vscode
+
+  # Show a summary of file-level changes after merges.
   stat = true
 
-  # Git has an option to display merge conflicts in diff3 format (by default it only displays the two files to be merged).
-  conflictStyle = diff3
+  # Show both sides of a conflict plus the common ancestor for easier resolution.
+  conflictStyle = zdiff3
 
-  # Include summaries of merged commits in newly created merge commit messages
+  # Include summaries of merged commits in generated merge commit messages.
   log = true
 
-[mergetool "default-mergetool"]
-  cmd = code --wait --merge $REMOTE $LOCAL $BASE $MERGED
-
 [rerere]
-	enabled = true
+  # Reuse recorded conflict resolutions when the same conflict appears again.
+  enabled = true
+
+  # Automatically stage reused conflict resolutions.
+  autoUpdate = true
 
 [apply]
-  # detect whitespace errors when applying a patch
+  # Warn when patch application would introduce whitespace problems.
   whitespace = warn
 
-  # automagically fix whitespace
+  # Automatically fix whitespace errors when patching.
   #whitespace = fix
 
 [commit]
+  # Sign commits by default.
   gpgSign = true
 
 [fetch]
+  # Update the commit-graph after fetching.
   writeCommitGraph = true
 
+  # Remove remote-tracking refs that no longer exist on the remote.
+  prune = true
+
 [push]
+  # Sign pushes when the remote asks for it.
   gpgSign = if-asked
 
-  # Make `git push` push relevant annotated tags when pushing branches out.
+  # Push matching annotated tags alongside branch pushes.
   followTags = true
 
+  # Default to simple push behavior for the current branch.
+  default = simple
+
+[pull]
+  # Rebase instead of merge when pulling changes.
+  rebase = true
+
 [rebase]
-  # Use --autosquash by default. It's not like one would write !fixup message by accident.
+  # Automatically reorder fixup and squash commits during interactive rebases.
   autoSquash = true
 
-  # Use --autostash when running git pull --rebase and when rebasing interactively
+  # Stash local changes automatically before a rebase and restore them afterward.
   autoStash = true
 
+  # Warn when commits would be dropped during a rebase.
+  missingCommitsCheck = warn
+
 [tag]
+  # Sign tags by default.
   gpgSign = true
 
 [includeIf "gitdir:/workspaces/"]
+  # Load additional settings for Codespaces and other /workspaces checkouts.
   path = .gitconfig-codespaces
 
 [maintenance]
