@@ -13,7 +13,7 @@
   attributesFile = ~/.gitattributes
 
   # Default editor for commit messages and other interactive Git prompts.
-  editor = code --wait
+	editor = code --wait
 
   # Avoid listing decomposed Unicode filenames as untracked on platforms that normalize names.
   precomposeUnicode = false
@@ -38,6 +38,13 @@
 
   # Store and use commit-graph data for faster history and reachability queries.
   commitGraph = true
+
+  # Automatically convert line endings to CRLF when checking out text files on Windows.
+  autocrlf = true
+
+[init]
+  # Set the default branch name for new repositories.
+	defaultBranch = main
 
 [feature]
   # Opt into Git's optimizations for very large repositories.
@@ -88,7 +95,7 @@
 
 [rerere]
   # Reuse recorded conflict resolutions when the same conflict appears again.
-  enabled = true
+	enabled = true
 
   # Automatically stage reused conflict resolutions.
   autoUpdate = true
@@ -104,12 +111,15 @@
   # Sign commits by default.
   gpgSign = true
 
+  # Show verbose diff output when preparing commit messages.
+	verbose = true
+
 [fetch]
   # Update the commit-graph after fetching.
   writeCommitGraph = true
 
   # Remove remote-tracking refs that no longer exist on the remote.
-  prune = true
+	prune = true
 
 [push]
   # Sign pushes when the remote asks for it.
@@ -120,6 +130,9 @@
 
   # Default to simple push behavior for the current branch.
   default = simple
+
+  # Automatically set up remote-tracking branches when pushing new branches.
+	autoSetupRemote = true
 
 [pull]
   # Rebase instead of merge when pulling changes.
