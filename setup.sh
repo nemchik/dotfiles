@@ -78,6 +78,7 @@ install_packages() {
 install_fnm() {
     echo -e "\u001b[7m Installing fnm...\u001b[0m"
     curl -fsSL https://fnm.vercel.app/install | bash -s -- --skip-shell
+    mkdir -p "${HOME}/.local/share/fnm"
 }
 
 install_fonts() {
