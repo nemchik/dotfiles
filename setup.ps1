@@ -7,6 +7,7 @@ $home_files = @(
     ".bashrc",
     ".gitattributes",
     ".gitconfig",
+    ".lefthookrc",
     ".profile"
 )
 

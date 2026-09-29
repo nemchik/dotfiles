@@ -28,6 +28,7 @@ declare -a home_files=(
     ".gitattributes"
     ".gitconfig"
     ".gitconfig-codespaces"
+    ".lefthookrc"
     ".profile"
 )
 
