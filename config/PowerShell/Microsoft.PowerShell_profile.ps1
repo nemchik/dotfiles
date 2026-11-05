@@ -14,6 +14,10 @@ Enable-TransientPrompt
 [Environment]::SetEnvironmentVariable("FNM_VERSION_FILE_STRATEGY", "recursive", "User")
 &fnm env --use-on-cd | Out-String | Invoke-Expression
 &fnm completions | Out-String | Invoke-Expression
+# Replaces the per-repo sync-node hooks: install and use the version a repo asks for.
+&fnm use --install-if-missing --silent-if-unchanged *> $null
+# A fresh install is only picked up by the next call, so switch again.
+&fnm use --silent-if-unchanged *> $null
 
 # Terminal-Icons
 # Import-Module Terminal-Icons

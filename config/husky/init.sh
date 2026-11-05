@@ -5,3 +5,7 @@ export FNM_COREPACK_ENABLED="true"
 export FNM_RESOLVE_ENGINES="true"
 export FNM_VERSION_FILE_STRATEGY="recursive"
 eval "$(fnm env --use-on-cd || true)"
+# Replaces the per-repo sync-node hooks: install and use the version a repo asks for.
+fnm use --install-if-missing --silent-if-unchanged >/dev/null 2>&1 || true
+# A fresh install is only picked up by the next call, so switch again.
+fnm use --silent-if-unchanged >/dev/null 2>&1 || true

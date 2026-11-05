@@ -136,4 +136,8 @@ if [[ -d "${FNM_PATH}" ]]; then
   export FNM_VERSION_FILE_STRATEGY="recursive"
   eval "$(fnm env --use-on-cd || true)"
   eval "$(fnm completions || true)"
+  # use-on-cd only fires on cd, so also switch for a shell that starts in a repo (same as ~/.lefthookrc)
+  fnm use --install-if-missing --silent-if-unchanged >/dev/null 2>&1 || true
+  # A fresh install is only picked up by the next call, so switch again.
+  fnm use --silent-if-unchanged >/dev/null 2>&1 || true
 fi
