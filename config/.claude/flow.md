@@ -1,6 +1,6 @@
 # Skills flow
 
-How I use the engineering skills (grill, spec, tickets, implement, review, retro). This file is the single source of truth.
+How I use the engineering skills (grill, spec, tickets, implement, review, retro).
 
 The block between `<!-- flow:start -->` and `<!-- flow:end -->` is generic. `/sync-flow` copies it verbatim into each repo's `docs/agents/workflow.md`, so keep it free of anything personal, machine-specific or repo-specific. Edit it here, never in a repo.
 
@@ -45,17 +45,18 @@ Grilling ends with a summary of the decisions and stops. "yes" or "lgtm" approve
 
 ### Phase boundaries
 
-At every phase boundary, say "continue here" or "go fresh" with a one-line reason: how full the context is, whether the next step needs this session's reasoning, and whether the artifacts it needs are self-contained. This is enforced by instruction only; there are no hooks.
+At every phase boundary, say "continue here" or "go fresh" with a one-line reason: how full the context is, whether the next step needs this session's reasoning, and whether the artifacts it needs are self-contained.
 
-### Guard rails (must not)
+### Guard rails
 
-- Never start a step the user hasn't chosen. Name the slash command to type and stop. Never do another step's work.
-- `/grill-with-docs` touches no code, branches, commits, PRs, issues or deploys. It edits only `GLOSSARY.md` and `docs/adr/`, and doesn't build on "yes" or "lgtm".
-- `/to-spec` doesn't interview or make new decisions.
-- `/to-tickets` writes no code, publishes nothing before the user approves the breakdown, and doesn't close the parent issue.
-- `/implement` and `/implement-spec` don't reopen the plan, don't interview, and don't build on the default branch.
-- `/code-review` doesn't fix anything.
-- `/retro` changes nothing until the user picks a candidate.
+Each step does only its own job, then names the next slash command and stops. The user picks every step.
+
+- `/grill-with-docs` asks questions and records decisions in `GLOSSARY.md` and `docs/adr/` only. It ends with the decision summary and waits for an approval word.
+- `/to-spec` writes up decisions already made.
+- `/to-tickets` drafts the breakdown, publishes after the user approves it, and leaves the parent issue open.
+- `/implement` and `/implement-spec` build the approved plan as written, on a feature branch.
+- `/code-review` reports findings only.
+- `/retro` proposes candidates and edits after the user picks one.
 <!-- flow:end -->
 
 ## Personal additions (not synced)
