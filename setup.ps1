@@ -1,12 +1,11 @@
 $config_dirs = @(
+    "git",
     "husky"
 )
 
 $home_files = @(
     ".bashrc",
     ".claude",
-    ".gitattributes",
-    ".gitconfig",
     ".lefthookrc",
     ".profile"
 )
@@ -134,6 +133,9 @@ function Install-Dirs-Config {
         $destination = Join-Path $env:USERPROFILE ".config\$config_dir"
         New-SymbolicLink -source $source -destination $destination
     }
+    # Git writes --global changes to ~/.gitconfig only if it exists, otherwise into the repo (docs/adr/0001).
+    $gitconfig = Join-Path $env:USERPROFILE ".gitconfig"
+    if (!(Get-Item -LiteralPath $gitconfig -Force -ErrorAction SilentlyContinue)) { New-Item -ItemType File -Path $gitconfig | Out-Null }
 }
 
 function Install-Files-Home {
