@@ -19,15 +19,13 @@ declare -a common_packages=(
 )
 
 declare -a config_dirs=(
+    "git"
     "husky"
 )
 
 declare -a home_files=(
     ".bashrc"
     ".claude"
-    ".gitattributes"
-    ".gitconfig"
-    ".gitconfig-codespaces"
     ".lefthookrc"
     ".profile"
 )
@@ -150,6 +148,9 @@ setup_symlinks() {
             ln -sfnv "${PWD}/config/${dir}" "${HOME}/.config/" || true
         fi
     done
+    # Git writes --global changes to ~/.gitconfig only if it can read it, otherwise into the repo (docs/adr/0001).
+    # A broken link counts as missing; it's removed first so touch doesn't create its target.
+    [[ -e "${HOME}/.gitconfig" ]] || { rm -f "${HOME}/.gitconfig" && touch "${HOME}/.gitconfig"; }
     for file in "${home_files[@]}"; do
         if backup_item "${PWD}/config/${file}" "${HOME}/${file}"; then
             ln -sfnv "${PWD}/config/${file}" "${HOME}"/ || true

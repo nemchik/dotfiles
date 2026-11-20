@@ -9,9 +9,6 @@
   signingKey = ~/.ssh/id_ed25519.pub
 
 [core]
-  # Shared attributes file applied to every repository.
-  attributesFile = ~/.gitattributes
-
   # Default editor for commit messages and other interactive Git prompts.
 	editor = code --wait
 
@@ -155,5 +152,3 @@
 [includeIf "gitdir:/workspaces/"]
   # Load additional settings for Codespaces and other /workspaces checkouts.
   path = .gitconfig-codespaces
-
-[maintenance]

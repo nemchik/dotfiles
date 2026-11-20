@@ -1,12 +1,11 @@
 $config_dirs = @(
+    "git",
     "husky"
 )
 
 $home_files = @(
     ".bashrc",
     ".claude",
-    ".gitattributes",
-    ".gitconfig",
     ".lefthookrc",
     ".profile"
 )
@@ -133,6 +132,14 @@ function Install-Dirs-Config {
         $source = Join-Path $PSScriptRoot "config\$config_dir"
         $destination = Join-Path $env:USERPROFILE ".config\$config_dir"
         New-SymbolicLink -source $source -destination $destination
+    }
+    # Git writes --global changes to ~/.gitconfig only if it can read it, otherwise into the repo (docs/adr/0001).
+    # A broken link counts as missing and is replaced. Test-Path reports a broken link as present, so check its target.
+    $gitconfig = Join-Path $env:USERPROFILE ".gitconfig"
+    $existing = Get-Item -LiteralPath $gitconfig -Force -ErrorAction SilentlyContinue
+    if (!$existing -or ($existing.LinkType -and !(Test-Path -LiteralPath @($existing.Target)[0]))) {
+        Remove-Item -LiteralPath $gitconfig -Force -ErrorAction SilentlyContinue
+        New-Item -ItemType File -Path $gitconfig | Out-Null
     }
 }
 
