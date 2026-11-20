@@ -1,0 +1,25 @@
+# Allowlist. ~/.claude is linked to this folder, so everything Claude Code
+# writes at runtime (projects, history, credentials, plugins, settings, caches)
+# lands here. Ignore everything, then un-ignore only what this repo owns.
+# Patterns are anchored with a leading slash so they match only at this level.
+*
+
+!/.gitignore
+!/CLAUDE.md
+!/flow.md
+!/README.md
+
+# Own skills only. Third-party skills installed into skills/ stay ignored.
+!/skills/
+!/skills/merged/
+!/skills/merged/**
+!/skills/recall-notes/
+!/skills/recall-notes/**
+!/skills/sync-flow/
+!/skills/sync-flow/**
+
+# The folders exist after clone; their contents are private and ignored.
+!/work/
+!/work/.gitkeep
+!/oss/
+!/oss/.gitkeep

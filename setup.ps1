@@ -1,10 +1,10 @@
 $config_dirs = @(
-    "gitignore.global",
     "husky"
 )
 
 $home_files = @(
     ".bashrc",
+    ".claude",
     ".gitattributes",
     ".gitconfig",
     ".lefthookrc",
@@ -37,7 +37,7 @@ function Install-Packages-Winget {
         Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe -ErrorAction SilentlyContinue
     }
 
-    winget import -i .\winget-packages.json --accept-package-agreements
+    winget import -i (Join-Path $PSScriptRoot "winget-packages.json") --accept-package-agreements
     winget upgrade --all --accept-package-agreements
 }
 
@@ -62,13 +62,17 @@ function Install-Modules-PowerShell {
     Write-Output "Installing PowerShell modules"
 
     foreach ($powershellModule in $powershell_modules) {
-        Install-Module -Name $powershellModule -AllowClobber -Force -ErrorAction SilentlyContinue
+        Install-Module -Name $powershellModule -Scope CurrentUser -AllowClobber -Force -ErrorAction SilentlyContinue
     }
 
     Update-Module
 }
 
 # Symbolic Links
+$backup_dir = Join-Path $env:USERPROFILE ".dotfiles-backup\$(Get-Date -Format yyyyMMdd-HHmmss)"
+
+# Copies an existing item over the repo copy, so differences show as unstaged changes,
+# moves the original to the backup folder, then links. Leaves the item alone if the copy fails.
 function New-SymbolicLink {
     Param
     (
@@ -77,31 +81,47 @@ function New-SymbolicLink {
         [Parameter(Mandatory = $true, Position = 1)]
         [string] $destination
     )
-    $backup = "$destination.old"
-
-    Remove-Item -Path $backup -Recurse -Force -ErrorAction SilentlyContinue
-    Move-Item -Path $destination -Destination $backup -Force -ErrorAction SilentlyContinue
+    $existing = Get-Item -LiteralPath $destination -Force -ErrorAction SilentlyContinue
+    if ($existing -and @($existing.Target)[0] -eq $source) {
+        return
+    }
+    if ($existing) {
+        if ($existing.PSIsContainer) {
+            # /SJ keeps junctions as junctions. Symbolic links are copied as their contents,
+            # because robocopy can't create them without administrator rights.
+            # /R:0 /W:0 fail at once instead of retrying.
+            robocopy $destination $source /E /SJ /R:0 /W:0 /NFL /NDL /NJH /NJS | Out-Null
+            $copied = $LASTEXITCODE -lt 8
+        }
+        else {
+            Copy-Item -LiteralPath $destination -Destination $source -Force -ErrorAction SilentlyContinue
+            $copied = $?
+        }
+        if (!$copied) {
+            Write-Warning "Copying $destination into $source failed; left it in place"
+            return
+        }
+        New-Item -ItemType Directory -Path $backup_dir -Force | Out-Null
+        Move-Item -LiteralPath $destination -Destination $backup_dir
+        Write-Output "Moved $destination to $backup_dir"
+    }
     New-Item -ItemType SymbolicLink -Path $destination -Target $source -Force
 }
 
 function Install-Profile-PowerShell {
-    Write-Output "Installing PowerShell profile"
+    Write-Output "Installing PowerShell 5 and 7 profiles"
 
-    $source5 = Join-Path $PWD "config\PowerShell"
-    $destination5 = Join-Path $env:HOMEPATH "Documents\WindowsPowerShell"
-    New-SymbolicLink -source $source5 -destination $destination5
-
-    Write-Output "Installing PowerShell 7 profile"
-
-    $source7 = Join-Path $PWD "config\PowerShell"
-    $destination7 = Join-Path $env:HOMEPATH "Documents\PowerShell"
-    New-SymbolicLink -source $source7 -destination $destination7
+    $source = Join-Path $PSScriptRoot "config\PowerShell"
+    $documents = [Environment]::GetFolderPath("MyDocuments") # follows redirection, e.g. to OneDrive
+    foreach ($profile_dir in @("WindowsPowerShell", "PowerShell")) {
+        New-SymbolicLink -source $source -destination (Join-Path $documents $profile_dir)
+    }
 }
 
 function Install-Profile-Terminal {
     Write-Output "Installing Terminal profile"
 
-    $source = Join-Path $PWD "config\Terminal"
+    $source = Join-Path $PSScriptRoot "config\Terminal"
     $destination = Join-Path $env:LOCALAPPDATA "Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState"
     New-SymbolicLink -source $source -destination $destination
 }
@@ -110,7 +130,7 @@ function Install-Dirs-Config {
     Write-Output "Installing config directories"
 
     foreach ($config_dir in $config_dirs) {
-        $source = Join-Path $PWD "config\$config_dir"
+        $source = Join-Path $PSScriptRoot "config\$config_dir"
         $destination = Join-Path $env:USERPROFILE ".config\$config_dir"
         New-SymbolicLink -source $source -destination $destination
     }
@@ -120,13 +140,24 @@ function Install-Files-Home {
     Write-Output "Installing home files"
 
     foreach ($home_file in $home_files) {
-        $source = Join-Path $PWD "config\$home_file"
+        $source = Join-Path $PSScriptRoot "config\$home_file"
         $destination = Join-Path $env:USERPROFILE $home_file
         New-SymbolicLink -source $source -destination $destination
     }
 }
 
 function Main {
+    $identity = [Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()
+    if ($identity.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        Write-Error "Run setup.ps1 as yourself, not as administrator."
+        exit 1
+    }
+    $developerMode = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -ErrorAction SilentlyContinue
+    if ($developerMode.AllowDevelopmentWithoutDevLicense -ne 1) {
+        Write-Error "Turn on Developer Mode (Settings > System > For developers) so symbolic links work without administrator rights."
+        exit 1
+    }
+
     Install-Packages-Winget
     Install-Packages-Scoop
     Install-Profile-PowerShell
