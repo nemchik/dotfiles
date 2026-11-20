@@ -152,5 +152,3 @@
 [includeIf "gitdir:/workspaces/"]
   # Load additional settings for Codespaces and other /workspaces checkouts.
   path = .gitconfig-codespaces
-
-[maintenance]
