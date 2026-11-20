@@ -14,7 +14,7 @@ Nothing written to a repo (file content, branch name, commit message, PR title o
 
 ## Steps
 
-1. **Source.** Extract the lines strictly between `<!-- flow:start -->` and `<!-- flow:end -->` in `~/.claude/flow.md`. Normalize line endings to LF and hash with `git hash-object --stdin`.
+1. **Source.** Extract the lines strictly between `<!-- flow:start -->` and `<!-- flow:end -->` in `~/.claude/flow.md`, matching each marker only as a whole line (`^<!-- flow:start -->$`): the file's intro names the markers inline. Normalize line endings to LF and hash with `git hash-object --stdin`.
 2. **Targets.** Use the repos given as arguments. Otherwise list the git repos under `~/git/*/*` that have `docs/agents/workflow.md`, and ask which to include.
 3. **Compare.** For each repo, read `docs/agents/workflow.md` from its default branch on `origin` (after `git fetch`), extract the same marker block, normalize and hash it.
     - Same hash: in sync, skip.
