@@ -4,17 +4,16 @@ Portable Claude Code user config. Setup links this whole folder to `~/.claude` (
 
 ## Layout
 
-| Path | Tracked | What it is |
-| --- | --- | --- |
-| `CLAUDE.md` | yes | Global rules. Imports `flow.md`. |
-| `flow.md` | yes | The skills flow. The block between its markers is the generic copy that `/sync-flow` puts in repos. |
-| `README.md` | yes | This file. |
-| `.gitignore` | yes | The allowlist. |
-| `skills/merged/` | yes | `/merged`: post-merge branch and worktree cleanup. |
-| `skills/recall-notes/` | yes | `/recall-notes`: recover context from notes and recent sessions. |
-| `skills/sync-flow/` | yes | `/sync-flow`: copy the generic flow block into repos, one confirmed PR each. |
-| `work/`, `oss/` | folder only | Private notes per context, each folder optionally indexed by its own `README.md`. Contents are ignored; `.gitkeep` keeps the folders. |
-| everything else | no | Runtime state: `projects/`, `history.jsonl`, `.credentials.json`, `plugins/`, `settings.json`, `settings.local.json`, caches, third-party skills. |
+| Path | What it is |
+| --- | --- |
+| `CLAUDE.md` | Global rules. Imports `flow.md`. |
+| `flow.md` | The skills flow. The block between its markers is the generic copy that `/sync-flow` puts in repos. |
+| `.gitignore` | The allowlist. |
+| `skills/merged/` | `/merged`: post-merge branch and worktree cleanup. |
+| `skills/recall-notes/` | `/recall-notes`: recover context from notes and recent sessions. |
+| `skills/sync-flow/` | `/sync-flow`: copy the generic flow block into repos, one confirmed PR each. |
+| `work/`, `oss/` | Private notes per context, each folder optionally indexed by its own `README.md`. Only the folders are tracked. |
+| everything else | Runtime state written by Claude Code, never tracked. |
 
 ## The allowlist
 

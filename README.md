@@ -17,6 +17,8 @@ Setup links each item in `config/` into your home folder (`config_dirs` go to `~
 2. Moves the original to `~/.dotfiles-backup/<timestamp>/`. Backups are never deleted automatically.
 3. Creates the link.
 
+If the copy fails, setup warns and leaves that item untouched and unlinked. When copying a folder on Windows, junctions inside it stay junctions, but symbolic links are copied as their contents.
+
 ## Machine-local links
 
 Some folders under `config/.claude/work/` or `config/.claude/oss/` live elsewhere, for example in a synced cloud folder that doubles as their backup. Link them once by hand on the machines that need them. Their contents are gitignored. On Windows:

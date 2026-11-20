@@ -141,30 +141,23 @@ backup_item() {
     mv -v "${destination}" "${backup_dir}/"
 }
 
-backup_configs() {
-    echo -e "\u001b[33;1m Backing up existing files... \u001b[0m"
-    mkdir -p "${HOME}/.config"
-    for dir in "${config_dirs[@]}"; do
-        backup_item "${PWD}/config/${dir}" "${HOME}/.config/${dir}" || true
-    done
-    for file in "${home_files[@]}"; do
-        backup_item "${PWD}/config/${file}" "${HOME}/${file}" || true
-    done
-    echo -e "\u001b[36;1m Done! Originals are in ${backup_dir}; review unstaged changes in the repo. \u001b[0m"
-}
-
 # Backs up each item first and links it only if that succeeded.
 setup_symlinks() {
     echo -e "\u001b[7m Setting up symlinks... \u001b[0m"
     mkdir -p "${HOME}/.config"
     for dir in "${config_dirs[@]}"; do
-        backup_item "${PWD}/config/${dir}" "${HOME}/.config/${dir}" &&
+        if backup_item "${PWD}/config/${dir}" "${HOME}/.config/${dir}"; then
             ln -sfnv "${PWD}/config/${dir}" "${HOME}/.config/" || true
+        fi
     done
     for file in "${home_files[@]}"; do
-        backup_item "${PWD}/config/${file}" "${HOME}/${file}" &&
+        if backup_item "${PWD}/config/${file}" "${HOME}/${file}"; then
             ln -sfnv "${PWD}/config/${file}" "${HOME}"/ || true
+        fi
     done
+    if [[ -d "${backup_dir}" ]]; then
+        echo -e "\u001b[36;1m Originals are in ${backup_dir}; review unstaged changes in the repo. \u001b[0m"
+    fi
 }
 
 setup_dotfiles() {
@@ -181,8 +174,7 @@ show_menu() {
     echo -e "  \u001b[34;1m (0) Setup Everything \u001b[0m"
     echo -e "  \u001b[34;1m (1) Install Packages \u001b[0m"
     echo -e "  \u001b[34;1m (2) Install Extras \u001b[0m"
-    echo -e "  \u001b[34;1m (3) Backup Configs \u001b[0m"
-    echo -e "  \u001b[34;1m (4) Setup Symlinks \u001b[0m"
+    echo -e "  \u001b[34;1m (3) Setup Symlinks \u001b[0m"
     echo -e "  \u001b[31;1m (*) Anything else to exit \u001b[0m"
     echo -en "\u001b[32;1m ==> \u001b[0m"
 
@@ -191,8 +183,7 @@ show_menu() {
         "0") setup_dotfiles ;;
         "1") install_packages ;;
         "2") install_extras ;;
-        "3") backup_configs ;;
-        "4") setup_symlinks ;;
+        "3") setup_symlinks ;;
         *) echo -e "\u001b[31;1m alvida and adios! \u001b[0m" && exit 0 ;;
     esac
 }

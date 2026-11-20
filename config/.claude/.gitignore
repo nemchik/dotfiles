@@ -1,7 +1,6 @@
 # Allowlist. ~/.claude is linked to this folder, so everything Claude Code
 # writes at runtime (projects, history, credentials, plugins, settings, caches)
 # lands here. Ignore everything, then un-ignore only what this repo owns.
-# Every exemption below must also be listed in README.md.
 # Patterns are anchored with a leading slash so they match only at this level.
 *
 

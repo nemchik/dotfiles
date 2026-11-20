@@ -13,6 +13,6 @@ bad=$(git -c core.quotePath=false diff --cached --name-only --diff-filter=ACMRT 
 if [ -n "$bad" ]; then
     echo "config/.claude is allowlist-only. These staged paths are outside it:" >&2
     echo "$bad" >&2
-    echo "Unstage them (git restore --staged <path>), or add them to config/.claude/.gitignore and its README.md." >&2
+    echo "Unstage them (git restore --staged <path>), or add them to config/.claude/.gitignore." >&2
     exit 1
 fi

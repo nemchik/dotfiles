@@ -66,7 +66,7 @@ function Install-Modules-PowerShell {
         Install-Module -Name $powershellModule -Scope CurrentUser -AllowClobber -Force -ErrorAction SilentlyContinue
     }
 
-    Update-Module -Scope CurrentUser
+    Update-Module
 }
 
 # Symbolic Links
