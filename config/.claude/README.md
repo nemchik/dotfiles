@@ -18,12 +18,6 @@ Portable Claude Code user config. Setup links this whole folder to `~/.claude` (
 
 ## The allowlist
 
-`.gitignore` ignores `*`, then un-ignores exactly these:
+`.gitignore` ignores `*`, then un-ignores the tracked paths. It is the only list of what is tracked. Each own skill needs a pair of lines (`!/skills/<name>/` and `!/skills/<name>/**`); other skills in `skills/` stay ignored. `settings.json` is deliberately ignored for now.
 
-- `.gitignore`, `CLAUDE.md`, `flow.md`, `README.md`
-- `skills/merged/`, `skills/recall-notes/`, `skills/sync-flow/` (one pair of lines per own skill; other skills in `skills/` stay ignored)
-- `work/.gitkeep`, `oss/.gitkeep`
-
-`settings.json` is deliberately ignored for now.
-
-To track something new, add it to `.gitignore` **and** to the list above. The lefthook `pre-commit` guard (`scripts/check-claude-allowlist.sh`) rejects any staged path under `config/.claude` that the allowlist ignores, including paths added with `git add -f`.
+To track something new, add it to `.gitignore`. The lefthook `pre-commit` guard (`scripts/check-claude-allowlist.sh`) rejects any staged path under `config/.claude` that the allowlist ignores, including paths added with `git add -f`.

@@ -54,7 +54,7 @@ install_mac() {
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)"
     fi
-    # Homebrew names golang "go"; grep and sed install as ggrep and gsed.
+    # Homebrew names golang "go".
     brew install "${common_packages[@]/#golang/go}" gh || true
 }
 
