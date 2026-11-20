@@ -73,7 +73,7 @@ function Install-Modules-PowerShell {
 $backup_dir = Join-Path $env:USERPROFILE ".dotfiles-backup\$(Get-Date -Format yyyyMMdd-HHmmss)"
 
 # Copies an existing item over the repo copy, so differences show as unstaged changes,
-# moves the original to the backup folder, then links.
+# moves the original to the backup folder, then links. Leaves the item alone if the copy fails.
 function New-SymbolicLink {
     Param
     (
@@ -88,14 +88,19 @@ function New-SymbolicLink {
     }
     if ($existing) {
         if ($existing.PSIsContainer) {
-            # /SL and /SJ copy symbolic links and junctions as links instead of following them.
-            robocopy $destination $source /E /SL /SJ /NFL /NDL /NJH /NJS | Out-Null
-            if ($LASTEXITCODE -ge 8) {
-                Write-Warning "Copying $destination into $source failed; the original is still in the backup"
-            }
+            # /SJ keeps junctions as junctions. Symbolic links are copied as their contents,
+            # because robocopy can't create them without administrator rights.
+            # /R:0 /W:0 fail at once instead of retrying.
+            robocopy $destination $source /E /SJ /R:0 /W:0 /NFL /NDL /NJH /NJS | Out-Null
+            $copied = $LASTEXITCODE -lt 8
         }
         else {
-            Copy-Item -LiteralPath $destination -Destination $source -Force
+            Copy-Item -LiteralPath $destination -Destination $source -Force -ErrorAction SilentlyContinue
+            $copied = $?
+        }
+        if (!$copied) {
+            Write-Warning "Copying $destination into $source failed; left it in place"
+            return
         }
         New-Item -ItemType Directory -Path $backup_dir -Force | Out-Null
         Move-Item -LiteralPath $destination -Destination $backup_dir
@@ -108,13 +113,13 @@ function Install-Profile-PowerShell {
     Write-Output "Installing PowerShell profile"
 
     $documents = [Environment]::GetFolderPath("MyDocuments") # follows redirection, e.g. to OneDrive
-    $source5 = Join-Path $PWD "config\PowerShell"
+    $source5 = Join-Path $PSScriptRoot "config\PowerShell"
     $destination5 = Join-Path $documents "WindowsPowerShell"
     New-SymbolicLink -source $source5 -destination $destination5
 
     Write-Output "Installing PowerShell 7 profile"
 
-    $source7 = Join-Path $PWD "config\PowerShell"
+    $source7 = Join-Path $PSScriptRoot "config\PowerShell"
     $destination7 = Join-Path $documents "PowerShell"
     New-SymbolicLink -source $source7 -destination $destination7
 }
@@ -122,7 +127,7 @@ function Install-Profile-PowerShell {
 function Install-Profile-Terminal {
     Write-Output "Installing Terminal profile"
 
-    $source = Join-Path $PWD "config\Terminal"
+    $source = Join-Path $PSScriptRoot "config\Terminal"
     $destination = Join-Path $env:LOCALAPPDATA "Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState"
     New-SymbolicLink -source $source -destination $destination
 }
@@ -131,7 +136,7 @@ function Install-Dirs-Config {
     Write-Output "Installing config directories"
 
     foreach ($config_dir in $config_dirs) {
-        $source = Join-Path $PWD "config\$config_dir"
+        $source = Join-Path $PSScriptRoot "config\$config_dir"
         $destination = Join-Path $env:USERPROFILE ".config\$config_dir"
         New-SymbolicLink -source $source -destination $destination
     }
@@ -141,7 +146,7 @@ function Install-Files-Home {
     Write-Output "Installing home files"
 
     foreach ($home_file in $home_files) {
-        $source = Join-Path $PWD "config\$home_file"
+        $source = Join-Path $PSScriptRoot "config\$home_file"
         $destination = Join-Path $env:USERPROFILE $home_file
         New-SymbolicLink -source $source -destination $destination
     }

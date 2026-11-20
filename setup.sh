@@ -123,16 +123,20 @@ install_extras() {
 backup_dir="${HOME}/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 
 # Copies an existing item over the repo copy, so differences show as unstaged changes,
-# then moves the original to the backup folder.
+# then moves the original to the backup folder. Leaves the item alone if the copy fails.
 backup_item() {
     local source="$1" destination="$2"
     [[ -e "${destination}" || -L "${destination}" ]] || return 0
     [[ "${destination}" -ef "${source}" ]] && return 0
+    # -L copies what a file symlink points to, not the link; a dangling link has nothing to copy.
     if [[ -d "${destination}" ]]; then
-        cp -a "${destination}/." "${source}/" || true
-    else
-        cp -a "${destination}" "${source}" || true
-    fi
+        cp -a "${destination}/." "${source}/"
+    elif [[ -e "${destination}" ]]; then
+        cp -aL "${destination}" "${source}"
+    fi || {
+        echo "Copying ${destination} into ${source} failed; left it in place" >&2
+        return 1
+    }
     mkdir -p "${backup_dir}"
     mv -v "${destination}" "${backup_dir}/"
 }
@@ -141,22 +145,25 @@ backup_configs() {
     echo -e "\u001b[33;1m Backing up existing files... \u001b[0m"
     mkdir -p "${HOME}/.config"
     for dir in "${config_dirs[@]}"; do
-        backup_item "${PWD}/config/${dir}" "${HOME}/.config/${dir}"
+        backup_item "${PWD}/config/${dir}" "${HOME}/.config/${dir}" || true
     done
     for file in "${home_files[@]}"; do
-        backup_item "${PWD}/config/${file}" "${HOME}/${file}"
+        backup_item "${PWD}/config/${file}" "${HOME}/${file}" || true
     done
     echo -e "\u001b[36;1m Done! Originals are in ${backup_dir}; review unstaged changes in the repo. \u001b[0m"
 }
 
+# Backs up each item first and links it only if that succeeded.
 setup_symlinks() {
     echo -e "\u001b[7m Setting up symlinks... \u001b[0m"
     mkdir -p "${HOME}/.config"
     for dir in "${config_dirs[@]}"; do
-        ln -sfnv "${PWD}/config/${dir}" "${HOME}/.config/" || true
+        backup_item "${PWD}/config/${dir}" "${HOME}/.config/${dir}" &&
+            ln -sfnv "${PWD}/config/${dir}" "${HOME}/.config/" || true
     done
     for file in "${home_files[@]}"; do
-        ln -sfnv "${PWD}/config/${file}" "${HOME}"/ || true
+        backup_item "${PWD}/config/${file}" "${HOME}/${file}" &&
+            ln -sfnv "${PWD}/config/${file}" "${HOME}"/ || true
     done
 }
 
@@ -164,7 +171,6 @@ setup_dotfiles() {
     echo -e "\u001b[7m Setting up dotfiles... \u001b[0m"
     install_packages
     install_extras
-    backup_configs
     setup_symlinks
     echo -e "\u001b[7m Done! \u001b[0m"
 }
@@ -196,6 +202,9 @@ main() {
         echo "Run setup.sh as yourself, not as root. It uses sudo where it needs it." >&2
         exit 1
     fi
+
+    # Paths below are relative to the repo, wherever setup was started from.
+    cd "$(dirname "${BASH_SOURCE[0]}")"
 
     if [[ "${HOME}" == "/home/codespace" ]]; then
         setup_dotfiles
