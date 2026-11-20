@@ -19,12 +19,12 @@ declare -a common_packages=(
 )
 
 declare -a config_dirs=(
-    "gitignore.global"
     "husky"
 )
 
 declare -a home_files=(
     ".bashrc"
+    ".claude"
     ".gitattributes"
     ".gitconfig"
     ".gitconfig-codespaces"
@@ -49,6 +49,15 @@ install_termux() {
     pkg install -y "${common_packages[@]}" getconf gh openssh termux-tools || true
 }
 
+install_mac() {
+    if ! command -v brew >/dev/null 2>&1; then
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)"
+    fi
+    # Homebrew names golang "go"; grep and sed install as ggrep and gsed.
+    brew install "${common_packages[@]/#golang/go}" gh || true
+}
+
 get_system_info() {
     # shellcheck source=/dev/null
     [[ -e /etc/os-release ]] && source /etc/os-release && echo "${ID:-Unknown}" && return
@@ -71,6 +80,7 @@ install_packages() {
         pop) install_debian ;;
         kali) install_debian ;;
         termux) install_termux ;;
+        mac) install_mac ;;
         *) echo "Unknown system!" && exit 1 ;;
     esac
 
@@ -84,9 +94,13 @@ install_fnm() {
 
 install_fonts() {
     echo -e "\u001b[7m Installing fonts...\u001b[0m"
-    mkdir -p "${HOME}/.local/share/fonts"
-    curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/GeistMono.tar.xz | tar -xJ -C "${HOME}/.local/share/fonts"
-    curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/NerdFontsSymbolsOnly.tar.xz | tar -xJ -C "${HOME}/.local/share/fonts"
+    local fonts_dir="${HOME}/.local/share/fonts"
+    if [[ "$(uname)" == "Darwin" ]]; then
+        fonts_dir="${HOME}/Library/Fonts"
+    fi
+    mkdir -p "${fonts_dir}"
+    curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/GeistMono.tar.xz | tar -xJ -C "${fonts_dir}"
+    curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/NerdFontsSymbolsOnly.tar.xz | tar -xJ -C "${fonts_dir}"
 }
 
 install_shfmt() {
@@ -106,16 +120,33 @@ install_extras() {
     install_starship
 }
 
+backup_dir="${HOME}/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+
+# Copies an existing item over the repo copy, so differences show as unstaged changes,
+# then moves the original to the backup folder.
+backup_item() {
+    local source="$1" destination="$2"
+    [[ -e "${destination}" || -L "${destination}" ]] || return 0
+    [[ "${destination}" -ef "${source}" ]] && return 0
+    if [[ -d "${destination}" ]]; then
+        cp -a "${destination}/." "${source}/" || true
+    else
+        cp -a "${destination}" "${source}" || true
+    fi
+    mkdir -p "${backup_dir}"
+    mv -v "${destination}" "${backup_dir}/"
+}
+
 backup_configs() {
     echo -e "\u001b[33;1m Backing up existing files... \u001b[0m"
     mkdir -p "${HOME}/.config"
     for dir in "${config_dirs[@]}"; do
-        mv -v "${HOME}/.config/${dir}" "${HOME}/.config/${dir}.old" || true
+        backup_item "${PWD}/config/${dir}" "${HOME}/.config/${dir}"
     done
     for file in "${home_files[@]}"; do
-        mv -v "${HOME}/${file}" "${HOME}/${file}.old" || true
+        backup_item "${PWD}/config/${file}" "${HOME}/${file}"
     done
-    echo -e "\u001b[36;1m Done backing up files as '.old'! . \u001b[0m"
+    echo -e "\u001b[36;1m Done! Originals are in ${backup_dir}; review unstaged changes in the repo. \u001b[0m"
 }
 
 setup_symlinks() {
@@ -161,6 +192,11 @@ show_menu() {
 }
 
 main() {
+    if [[ "${EUID}" -eq 0 ]]; then
+        echo "Run setup.sh as yourself, not as root. It uses sudo where it needs it." >&2
+        exit 1
+    fi
+
     if [[ "${HOME}" == "/home/codespace" ]]; then
         setup_dotfiles
         exit 0

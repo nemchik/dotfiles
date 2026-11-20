@@ -1,0 +1,5 @@
+# Repo hooks. Enable once per clone with: lefthook install
+pre-commit:
+  commands:
+    claude-allowlist:
+      run: sh scripts/check-claude-allowlist.sh
