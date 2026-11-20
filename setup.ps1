@@ -7,7 +7,6 @@ $home_files = @(
     ".claude",
     ".gitattributes",
     ".gitconfig",
-    ".gitconfig-codespaces",
     ".lefthookrc",
     ".profile"
 )
@@ -110,18 +109,13 @@ function New-SymbolicLink {
 }
 
 function Install-Profile-PowerShell {
-    Write-Output "Installing PowerShell profile"
+    Write-Output "Installing PowerShell 5 and 7 profiles"
 
+    $source = Join-Path $PSScriptRoot "config\PowerShell"
     $documents = [Environment]::GetFolderPath("MyDocuments") # follows redirection, e.g. to OneDrive
-    $source5 = Join-Path $PSScriptRoot "config\PowerShell"
-    $destination5 = Join-Path $documents "WindowsPowerShell"
-    New-SymbolicLink -source $source5 -destination $destination5
-
-    Write-Output "Installing PowerShell 7 profile"
-
-    $source7 = Join-Path $PSScriptRoot "config\PowerShell"
-    $destination7 = Join-Path $documents "PowerShell"
-    New-SymbolicLink -source $source7 -destination $destination7
+    foreach ($profile_dir in @("WindowsPowerShell", "PowerShell")) {
+        New-SymbolicLink -source $source -destination (Join-Path $documents $profile_dir)
+    }
 }
 
 function Install-Profile-Terminal {

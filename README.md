@@ -26,7 +26,3 @@ Some folders under `config/.claude/work/` or `config/.claude/oss/` live elsewher
 ```powershell
 New-Item -ItemType Junction -Path config\.claude\work\acme -Target "$env:OneDriveCommercial\claude\acme"
 ```
-
-## Hooks
-
-Run `lefthook install` once per clone. The `pre-commit` hook rejects staged files under `config/.claude` that its allowlist ignores (see `config/.claude/README.md`).
