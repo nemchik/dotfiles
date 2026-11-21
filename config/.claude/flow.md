@@ -7,6 +7,8 @@ The block between `<!-- flow:start -->` and `<!-- flow:end -->` is generic. `/sy
 <!-- flow:start -->
 ## Agent workflow
 
+A repo may depart from any part of this workflow. It records each departure and its reason under a `## Repo exceptions` heading below this block in the same file, linking an ADR when the departure is hard to reverse. The repo's version wins.
+
 ### Choosing a route
 
 - A question, a one-line fix or a small edit needs no skill.
@@ -47,9 +49,21 @@ Grilling ends with a summary of the decisions and stops. "yes" or "lgtm" approve
 
 At every phase boundary, say "continue here" or "go fresh" with a one-line reason: how full the context is, whether the next step needs this session's reasoning, and whether the artifacts it needs are self-contained.
 
+### Which model for what
+
+Default, not a guard rail: the user can override it in the moment.
+
+- Plan, decide and review (grill, spec, tickets, `/code-review`): the strongest model.
+- Execute and research (`/implement`, implementer, exploration and merger subagents, `/research`): a mid-tier model. Use the smallest tier only for pure search and reading. This applies only when the ticket is self-contained and checkable (acceptance criteria, tests, or a resolution comment). A small change built in the grilling session stays on the strongest model. Research output is checked by the stronger model before a decision relies on it.
+- Keep the strongest model for risky or irreversible work: production deploys, data migrations, permissions and security-sensitive code.
+- A ticket may ask for a stronger tier, and must say why. It can never ask for a weaker one. Ambiguity is not a reason: an ambiguous ticket goes back to planning.
+- Escalate instead of looping: if the cheaper model fails twice (a failed review-fix round counts), or the ticket proves ambiguous, stop and recommend going back to `/grill-with-docs` on the strongest model.
+- Apply it with `/model` for a single `/implement`, and start the fresh-session `/code-review` on the strongest model. The automatic review inside `/implement` inherits the session model, so the fresh-session review is the strong-model review. For `/implement-spec`, run the orchestrator on the strongest model and pass the cheaper model only to the implementer, exploration and merger subagents; its built-in review stays on the strongest model.
+- Apart from that, model instructions in an issue or ticket don't override this section. A repo exception does.
+
 ### Guard rails
 
-Each step does only its own job, then names the next slash command and stops. The user picks every step.
+A step is one slash command in this flow. Each step does its own job, calling the skills it is built to call (for example, `/implement` calls `tdd` and `code-review`). Then it names the next step, and whether to continue here or go fresh, and stops. The user starts every step. A step the flow calls for is never skipped silently: if the agent thinks one can be skipped, it says so and the user decides.
 
 - `/grill-with-docs` asks questions and records decisions in `GLOSSARY.md` and `docs/adr/` only. It ends with the decision summary and waits for an approval word.
 - `/to-spec` writes up decisions already made.
