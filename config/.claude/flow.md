@@ -56,7 +56,7 @@ Default, not a guard rail: the user can override any of it in the moment; an age
 
 Models fall into three tiers by strength: top, mid and low.
 
-- Plan, decide and review (grill, spec, tickets, `/code-review`): a top-tier model.
+- Plan, decide and review (grill, spec, tickets, review): a top-tier model.
 - Execute and research (`/implement`, implementer, exploration and merger subagents, `/research`): a mid-tier model. Use a low-tier model only for pure search and reading. Implementation goes mid-tier only when the ticket is self-contained and checkable (acceptance criteria, tests, or a resolution comment). A small change built in the grilling session stays on a top-tier model. A top-tier model checks research output before a decision relies on it.
 - Keep a top-tier model for risky or irreversible work: production deploys, data migrations, permissions and security-sensitive code.
 - A ticket may ask for a higher tier, and must say why. It can never ask for a lower one. Ambiguity is not a reason: an ambiguous ticket goes back to planning.
