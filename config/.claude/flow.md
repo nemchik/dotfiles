@@ -80,4 +80,4 @@ A step is one slash command in this flow. Each step does only its own job, calli
 ## Personal additions (not synced)
 
 - Step 4 of Finishing is `/merged`.
-- Outside a repo, `GLOSSARY.md` and ADR content goes to my local profile, never to the issue tracker: under `~/.claude/work/<context>/` or `~/.claude/oss/<context>/` (gitignored), as `GLOSSARY.md` and `adr/`.
+- Outside a repo, or in a repo I don't own (an upstream I contribute to), `GLOSSARY.md` and ADR content goes to my local profile, never to the issue tracker or that repo: under `~/.claude/work/<context>/` or `~/.claude/oss/<context>/` (gitignored), as `GLOSSARY.md` and `adr/`.
