@@ -27,24 +27,23 @@ Grilling ends with a summary of the decisions and stops. "yes" or "lgtm" approve
 
 - `/code-review` diffs commits (`<fixed-point>...HEAD`), so uncommitted work is never reviewed. Commit first.
 - Before recommending `/code-review`, run `git status` and check for commits not yet pushed. Report any uncommitted or unpushed work with a recommendation (commit it, push it, stash it, or leave it out on purpose and say why).
-- Every build gets at least two review passes: the skill's built-in review, then `/code-review` in a fresh session.
-  - `/implement`: commit, then run its built-in `code-review`. This order overrides the skill's, which reviews before committing. The implement session fixes those findings, commits, and recommends the fresh-session `/code-review`.
-  - `/implement-spec`: its built-in review and fix round run as written. Then it recommends the fresh-session `/code-review` against the integration branch.
-- After any fix round, recommend another fresh-session `/code-review` when the fixes changed behaviour, added or changed tests, or touched files the review didn't flag. Fixes limited to wording, naming or comments need no extra pass.
+- Every build gets at least two review passes: the **built-in review** the build skill runs itself, then `/code-review` in a fresh session.
+  - `/implement`: commit, then run the built-in review. This order overrides the skill's, which reviews before committing. The implement session fixes those findings, commits, and recommends the fresh-session `/code-review`.
+  - `/implement-spec`: the built-in review and its fix round run as the skill describes. Then the orchestrator recommends the fresh-session `/code-review` against the integration branch.
 
 ### Fixing review findings
 
-- A fresh review session reports only. It never fixes, never loops until clean (it never converges) and never spawns more reviewers. Each extra pass is a new fresh session the user starts.
+- A fresh-session `/code-review` is one pass: it reports and stops, because looping until clean never converges. Each extra pass is a new fresh session the user starts.
 - Fresh-review findings go back to the original session (the implement session or the `/implement-spec` orchestrator) if it still has room (under ~150k tokens): paste the findings in. Otherwise run a fresh `/implement` seeded with the findings.
-- `/implement-spec` fixes its built-in review's findings in one fresh implementer subagent.
-- A failed fix round counts toward the escalation rule in "Which model for what".
+- After any fix round, recommend another fresh-session `/code-review` when the fixes changed behaviour, added or changed tests, or touched files the review didn't flag. Fixes limited to wording, naming or comments need no extra pass.
+- Extra passes stay under the escalation rule in "Which model for what": a failed fix round, after any pass, counts as a failed build.
 
 ### Pull requests
 
 - Work closes through PRs, so `/implement-spec` always opens its draft PR.
 - Whenever you write or rewrite a PR body, call the Skill tool with "pr", then add `Closes #N` for each ticket.
-- A repo's PR template (such as `.github/pull_request_template.md`) outranks `pr`. Keep the template's headings and order, put `pr`'s Summary, Evidence and Merge Danger into the template sections that match, and add the unmatched ones after the template's own. Where the template forbids extra sections or conflicts with a `pr` section, follow the template and drop that section.
-- `/implement-spec`'s draft starts with a placeholder line plus the `Closes #N` lines. When the skill marks the PR ready, write the body with `pr`. After the fresh-session review and any further fixes, rewrite it with `pr` again.
+- A repo's PR template (such as `.github/pull_request_template.md`) outranks `pr`. Keep the template's headings and order, put `pr`'s Summary, Evidence and Merge Danger into the template sections that match, and add the unmatched ones after the template's own. Where the template conflicts with a `pr` section, or forbids extra sections, follow the template and drop the conflicting or unmatched sections.
+- `/implement-spec`'s draft body starts as a placeholder line. Write the real body when the skill marks the PR ready, and again after the fresh-session review and any further fixes.
 
 ### Finishing
 
