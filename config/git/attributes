@@ -1,4 +1,5 @@
 # Automatically normalize line endings for all text-based files
 #* text=auto
 # Disabled because of https://github.com/mathiasbynens/dotfiles/issues/149
-# Not needed when core.autocrlf is set to true in config https://github.com/git/git/blob/6ebdac1bab966b720d776aa43ca188fe378b1f4b/Documentation/RelNotes/2.10.0.txt#L248
+# Not needed when core.autocrlf is set to input in config https://github.com/git/git/blob/6ebdac1bab966b720d776aa43ca188fe378b1f4b/Documentation/RelNotes/2.10.0.txt#L248
+# An eol=lf rule here would also force LF on repos that want CRLF, so pin endings in each repo's .gitattributes.
