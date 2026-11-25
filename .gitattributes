@@ -1,2 +1,2 @@
-# Set the default behavior, in case people don't have core.autocrlf set.
-* text=auto
+# Store and check out text files with LF, whatever core.autocrlf says, to match .editorconfig.
+* text=auto eol=lf

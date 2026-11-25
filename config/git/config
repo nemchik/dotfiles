@@ -36,8 +36,9 @@
   # Store and use commit-graph data for faster history and reachability queries.
   commitGraph = true
 
-  # Automatically convert line endings to CRLF when checking out text files on Windows.
-  autocrlf = true
+  # Check out files with the line endings the repo stores, and turn stray CRLF into LF on commit.
+  # `true` would check out CRLF on Windows, which LF formatters (Biome via .editorconfig) then rewrite.
+  autocrlf = input
 
 [init]
   # Set the default branch name for new repositories.
