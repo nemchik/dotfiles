@@ -34,14 +34,14 @@ Grilling ends with a summary of the decisions and stops. "yes" or "lgtm" approve
 ### Fixing review findings
 
 - Every review pass, built-in or fresh, runs once and reports: it never loops until clean (that never converges) and spawns no reviewers beyond the skill's own. A fresh-session `/code-review` also never fixes. Each extra pass is a new fresh session the user starts.
-- Fresh-review findings go back to the original session (the implement session or the `/implement-spec` orchestrator) if it is still open, not cleared, and has room (under ~150k tokens): paste the findings in. Otherwise run a fresh `/implement` seeded with the findings.
+- Fresh-review findings go back to the original session (the implement session or the `/implement-spec` orchestrator) if it is still open, not cleared, and has room (under ~150k tokens): paste the findings in. The orchestrator hands them to one fresh implementer subagent. Otherwise run a fresh `/implement` seeded with the findings.
 - After any fix round, recommend another fresh-session `/code-review` when the fixes changed behaviour, added or changed tests, or touched files the review didn't flag. Fixes limited to wording, naming or comments need no extra pass.
-- Extra passes stay under the escalation rule in "Which model for what".
+- A failed fix round, after any pass, counts toward the escalation rule in "Which model for what".
 
 ### Pull requests
 
-- Work closes through PRs: `/implement-spec` always opens its draft PR, and every build ships as a PR.
-- Whenever you write or rewrite a PR body, call the Skill tool with "pr", then add `Closes #N` for each ticket.
+- Work closes through PRs, so `/implement-spec` always opens its draft PR.
+- Whenever you write or rewrite a PR body, call the Skill tool with "pr", then add `Closes #N` for each ticket. When the PR delivers every ticket under a parent spec issue, add `Closes #N` for the parent too.
 - A repo's PR template (such as `.github/pull_request_template.md`) outranks `pr`. Keep the template's headings and order, put `pr`'s Summary, Evidence and Merge Danger into the template sections that match, and add the unmatched ones after the template's own. Where the template conflicts with a `pr` section, or forbids extra sections, follow the template and drop the conflicting or unmatched sections.
 - `/implement-spec`'s draft body starts as a placeholder line. Write the real body when the skill marks the PR ready, and again after the fresh-session review and any further fixes.
 
@@ -49,7 +49,7 @@ Grilling ends with a summary of the decisions and stops. "yes" or "lgtm" approve
 
 1. Push and open a PR, its body written as "Pull requests" describes.
 2. Merge once the PR has been reviewed.
-3. Tick each ticket's acceptance criteria; no build skill does this, so the finishing session does. The merge has already closed the tickets.
+3. Tick each ticket's acceptance criteria; no build skill does this, so the finishing session does. A merge into the default branch closes the tickets; if the PR targets another branch, close them by hand once the work reaches the default branch.
 4. Clean up merged branches and worktrees.
 5. Optional: `/retro`, only if the session was rough. Run it in the session it looks back on, before clearing; after a clear, point it at that session's log.
 
